@@ -608,6 +608,7 @@ class WorkerAnalyseApp:
             # Start search enumeration.
             for searchparams_key in \
                     self.master_bug_object[bug]:
+                print(searchparams_key)
                 if searchparams_key == 'MANIFESTPARAMS':
                     self.fn_handle_manifest_analysis(bug)
                 if searchparams_key == 'CODEPARAMS':
@@ -690,9 +691,13 @@ class WorkerAnalyseApp:
         
         :param bug: current bug being analysed.
         """
+
+        print("HANDLING CODE ANALYSIS")
+
         # If there is no code search to be performed, return.
         code_obj = self.master_bug_object[bug]['CODEPARAMS']
         if code_obj == {}:
+            print("RTN EMPTY")
             return
 
         # If code search is to be performed,

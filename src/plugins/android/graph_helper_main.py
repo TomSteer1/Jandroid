@@ -51,10 +51,15 @@ class GraphHelperMain:
         # Create uniqueness constraint on node identifier.
         # For this, we first need to set a common label for all apps.
         self.common_label = ':App'
-        self.inst_graph_handler.fn_create_uniqueness_constraint(
-            self.common_label,
-            self.node_identifier
-        )
+        try:
+            self.inst_graph_handler.fn_create_uniqueness_constraint(
+                self.common_label,
+                self.node_identifier
+            )
+        except Exception as e:
+            print("create contraints failed, continuing")
+            
+        
 
     def fn_update_graph(self, app_name, graphables):
         """Updates the graph for a specific app, based on analysis output.

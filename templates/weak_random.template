@@ -1,0 +1,14 @@
+{
+    "METADATA": {
+        "NAME": "weak_random"
+    },
+    "CODEPARAMS": {
+        "SEARCH": {
+            "SEARCHFORCALLTOMETHOD": {
+                "METHOD": "Ljava/util/Random;->nextInt",
+                "RETURN": "<method> AS @weak_random"
+            }
+        }
+    },
+    "GRAPH": "@weak_random WITH <method>:<desc>:<class> AS attribute=nodename"
+}

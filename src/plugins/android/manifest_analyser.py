@@ -201,6 +201,7 @@ class ManifestAnalyser:
                 + str(key)
                 + '".'
             )
+            #Currently looking at key "intent-filter".
 
             # If the subsequent level is also a dictionary,
             #  then we need to do all this all over again.
@@ -398,10 +399,11 @@ class ManifestAnalyser:
             
         # Generate namespace variants.
         all_tag_variants = []
-        for tag in all_tags:
-            all_tag_variants.append(self.fn_generate_namespace_variants(tag))
+        for tag in [tag]:
+            all_tag_variants += self.fn_generate_namespace_variants(tag)
+
         for tag_name in all_tag_variants: 
-            if tag_name in current_xml_tree.attrib:
+            if tag_name.encode('UTF-8') in current_xml_tree.attrib:
                 return False
         return True
             
@@ -460,6 +462,7 @@ class ManifestAnalyser:
             if tag in current_xml_tree.attrib:
                 if current_xml_tree.attrib[tag] in lookfor_values:
                     return True
+                
         return False
 
     def fn_process_exported(self, lookfor_tags, lookfor_value,

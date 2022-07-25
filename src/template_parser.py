@@ -1026,16 +1026,16 @@ class AndroidTemplateParser:
                                           + 'used with REVERSE tracing.'
                             }
                         )
-                    if (('ARGTO' in trace_to_string) and 
-                            (trace_direction == 'REVERSE')):
-                        raise JandroidException(
-                            {
-                                'type': str(os.path.basename(__file__))
-                                        + ': BadTraceParams',
-                                'reason': 'ARGTO for TRACETO can only be '
-                                          + 'used with FORWARD tracing.'
-                            }
-                        )
+                    # if (('ARGTO' in trace_to_string) and 
+                    #         (trace_direction == 'REVERSE')):
+                    #     raise JandroidException(
+                    #         {
+                    #             'type': str(os.path.basename(__file__))
+                    #                     + ': BadTraceParams',
+                    #             'reason': 'ARGTO for TRACETO can only be '
+                    #                       + 'used with FORWARD tracing.'
+                    #         }
+                    #     )
                     
             # Check general structure.
             bool_trace_structure_satisfied = \

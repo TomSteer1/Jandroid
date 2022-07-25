@@ -1,0 +1,19 @@
+{
+    "METADATA": {
+        "NAME": "browsableactivity"
+    },    
+    "MANIFESTPARAMS": {
+        "BASEPATH": "manifest->application->activity OR manifest->application->activity-alias",
+        "SEARCHPATH": {
+            "intent-filter": {
+                "category": {
+                    "LOOKFOR": {
+                        "TAGVALUEMATCH": "<NAMESPACE>:name=android.intent.category.BROWSABLE"
+                    }
+                }
+            }
+        },
+        "RETURN": ["<smali>:<NAMESPACE>:name AS @browsable_activity_name"]
+    },
+    "GRAPH": "@browsable_activity_name WITH <method>:<desc>:<class> AS attribute=nodename"
+}

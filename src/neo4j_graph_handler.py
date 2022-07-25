@@ -2,8 +2,11 @@ import os
 import sys
 import logging
 import configparser
-from neo4jrestclient.client import GraphDatabase
+from neo4j import GraphDatabase
 from common import JandroidException
+import traceback
+
+
 
 
 class Neo4jGraphHandler:
@@ -41,6 +44,8 @@ class Neo4jGraphHandler:
         # Initialise database connection object.
         self.db = None
 
+
+
     def fn_connect_to_graph(self):
         """Connects to Neo4j database.
 
@@ -54,13 +59,13 @@ class Neo4jGraphHandler:
             'Trying to connect to Neo4j graph DB.'
         )
         try:
-            self.db = GraphDatabase(
+            self.db = GraphDatabase.driver(
                 self.neo4j_url,
-                username=self.neo4j_username,
-                password=self.neo4j_password
+                auth=(self.neo4j_username, self.neo4j_password)
             )
             logging.info('Connected to graph DB.')
         except Exception as e:
+            traceback.print_exc()
             raise JandroidException(
                 {
                     'type': str(os.path.basename(__file__))
@@ -343,6 +348,13 @@ class Neo4jGraphHandler:
         
         return node_string
 
+
+    def query_callback(self, tx, query):
+
+        result = tx.run(query)
+
+        return result
+
     def fn_execute_graph_query(self, cypher_query):
         """Executes the provided Cypher query against a neo4j graph.
         
@@ -352,8 +364,11 @@ class Neo4jGraphHandler:
             execute
         """
         try:
-            res = self.db.query(cypher_query)
+            
+            with self.db.session() as session:
+                res = session.read_transaction(self.query_callback, cypher_query)
         except Exception as e:
+            print(cypher_query)
             raise JandroidException(
                 {
                     'type': str(os.path.basename(__file__))
@@ -364,9 +379,7 @@ class Neo4jGraphHandler:
         logging.debug(
             'Executed query "'
             + cypher_query
-            + '" with result stats: '
-            + str(res.stats)
-            + ' and values: '
-            + str(res.rows)
+            + 'data: '
+            + str(res.data())
         )
         return res

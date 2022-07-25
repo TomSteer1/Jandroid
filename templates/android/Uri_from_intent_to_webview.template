@@ -1,0 +1,19 @@
+{
+    "METADATA": {
+        "NAME": "Uri_from_intent_to_webview"
+    },    
+    "MANIFESTPARAMS": {
+        "BASEPATH": "manifest->application->activity OR manifest->application->activity-alias OR manifest->application->receiver",
+        "RETURN": ["<smali>:<NAMESPACE>:name AS @activity_name"]
+    },
+    "CODEPARAMS": {
+        "TRACE": {
+            "TRACETYPE": "ADVANCED",
+            "TRACEFROM": "ARGTO <method>:Landroid/webkit/WebView;->loadUrl(Ljava/lang/String;)V ARGINDEX 1",
+            "TRACELENGTHMAX":10,
+            "TRACETO": "RESULTOF Landroid/content/Intent;->getData()Landroid/net/Uri;",
+            "RETURN": "<tracepath> AS @tracepath_browsablejsbridge"
+        }
+    },
+    "GRAPH": "@tracepath_browsablejsbridge WITH <method>:<desc>:<class> AS attribute=nodename"
+}

@@ -103,12 +103,15 @@ class CodeTraceAdvanced:
         self.fn_enumerate_trace_source_sinks(code_trace_template)
         for trace_from_item in self.trace_from_main_list:
             for trace_to_item in self.trace_to_main_list:
+                logging.debug(trace_from_item)
+                logging.debug(trace_to_item)
                 bool_single_trace_satisfied = self.fn_trace_through_code(
                     trace_from_item,
                     trace_to_item
                 )
                 if bool_single_trace_satisfied == True:
                     bool_satisfied = True
+        # logging.debug("LOCATED SINKS")
         if bool_satisfied == True:
             if 'RETURN' in code_trace_template:
                 self.fn_analyse_returns(code_trace_template)
@@ -124,6 +127,7 @@ class CodeTraceAdvanced:
         self.fn_reset()
         
         # Return the outcome and the links, to be used by next code segment.
+        logging.debug(self.output_chains)
         return [bool_satisfied, self.output_chains]
     
     def fn_trace_through_code(self, trace_from, trace_to):
@@ -134,6 +138,8 @@ class CodeTraceAdvanced:
         :returns: boolean indicating whether at least one path was identified
             between the start and end points
         """
+
+        logging.debug(f"trace from {trace_from} to {trace_to}")
         # Get trace types.
         [self.from_class_method, trace_from_string] = \
             self.fn_get_trace_type(trace_from)
@@ -171,7 +177,7 @@ class CodeTraceAdvanced:
             if self.trace_direction == TRACE_REVERSE:
                 self.fn_trace_reverse(
                     trace_from,
-                    trace_from,
+                    [],
                     self.trace_from_argindex,
                     self.from_class_method
                 )
@@ -183,6 +189,7 @@ class CodeTraceAdvanced:
                 )
         # If the output chain list is not empty, it means at least one path
         #  between the start and end points was identified.
+        logging.debug(f"output_chain: {self.output_chains}")
         if self.output_chains != []:
             return True
         else:
@@ -473,7 +480,7 @@ class CodeTraceAdvanced:
                         [0x6E, 0x6F, 0x70, 0x71, 0x72,
                         0x74, 0x75, 0x76, 0x77, 0x78]):
                     continue
-                last_operand = instruction.get_operands()[-1][2]
+                last_operand = instruction.get_operands()[-1][-1]
                 if jsinterface_class in last_operand:
                     output.append(jsinterface_class)
                     break
@@ -575,16 +582,20 @@ class CodeTraceAdvanced:
         :param position: integer operand index
         :param class_or_method: either "<class>" or "<method">
         """
+
+        logging.debug(f"position: {position}")
         # Get class/method/desc parts.
         [class_part, method_part, desc_part] = \
             self.fn_determine_class_method_desc(
                 trace_from,
                 class_or_method
             )
+
         # Include subclasses.
         all_classes = \
             self.inst_analysis_utils.fn_find_subclasses(class_part)
         all_classes.append(class_part)
+        logging.debug(all_classes)
         
         for one_class in all_classes:
             combined_method_string = one_class
@@ -596,15 +607,19 @@ class CodeTraceAdvanced:
                         combined_method_string + desc_part
             method_check_string = 'e' + combined_method_string + ' ' + str(position)
             if method_check_string in self.checked_methods:
+                logging.debug("")
                 continue
+
             self.checked_methods.add(method_check_string)
+            logging.debug(f"checking {method_check_string}")
+            logging.debug(f"trace_to_type: {self.trace_to_type}")
             # If the trace to type doesn't care about arguments or results 
             #  (i.e., just a class or method), 
             #  then perform a stop condition check.
-            if ((self.trace_to_type != 'RESULTOF') and 
-                    (self.trace_to_type != 'ARGTO')):
+            if ((self.trace_to_type != 'RESULTOF') and (self.trace_to_type != 'ARGTO')):
                 self.fn_check_generic_stop_condition(combined_method_string)
             if self.stop_condition == STOP_CONDITION_TRUE:
+                
                 self.output_chains.append(chain)
                 self.stop_condition = False
                 continue
@@ -625,7 +640,9 @@ class CodeTraceAdvanced:
                     method_part,
                     desc_part
                 )
+            logging.debug(f"found starting_points {starting_points}")
             for starting_point in starting_points:
+
                 [c, m, d] = \
                     self.inst_analysis_utils.fn_get_class_method_desc_from_method(
                         starting_point
@@ -635,9 +652,14 @@ class CodeTraceAdvanced:
                                       + starting_point_string \
                                       + ' ' \
                                       + combined_method_string
+                if chain == []:
+                    chain = f'{c}.{m}:{trace_from}'
+
                 if method_check_string in self.checked_methods:
+                    logging.debug(f"skipping {method_check_string}")
                     continue
                 self.checked_methods.add(method_check_string)
+
                 num_locals = self.fn_get_locals(starting_point)
                 if starting_point_string in self.all_annotations:
                     if ('Landroid/webkit/JavascriptInterface;' in 
@@ -656,27 +678,56 @@ class CodeTraceAdvanced:
                     combined_method_string,
                     position
                 )
+                logging.debug(f"num_locals: {num_locals}")
+                logging.debug(f"index_reg: {index_reg}")
                 if index_reg == []:
                     continue
                 for tuple in index_reg:
+                    # https://gist.github.com/AadilGillani/8c5690ebbaceda2914f9dc37197bd154
+                    # (i.e. 2 local registers + 3 parameter registers)
                     if tuple[1] < num_locals:
-                        v_reg_trace_output = self.fn_trace_v_reverse(
+                        logging.debug("operand < num_locals")
+                        # var is in a local register, we can trace with static
+
+                        solution = self.fn_trace_v_reverse(
                             starting_point,
                             tuple[0]-1,
                             tuple[1],
                             chain
                         )
-                        if v_reg_trace_output == True:
-                            self.output_chains.append(chain)
-                            self.stop_condition = STOP_CONDITION_FALSE
+                        if solution != None:
+                            (v_reg_trace_output, new_chain) = solution
+                            if v_reg_trace_output == True:
+                                self.output_chains.append(new_chain)
+                                self.stop_condition = STOP_CONDITION_FALSE
                             continue
-                        else:
-                            continue
-                    else:                        
+                        continue
+                    else:
+
+                        logging.debug("operand > num_locals")
+                        # reg > locals, look again in virtuals
+
+                        # Sometimes the compiler reuses param registers for "locals", so we might be able to find what we're looking for in the registers, if it's ARGTO.
+                        solution = self.fn_trace_v_reverse(
+                            starting_point,
+                            tuple[0]-1,
+                            tuple[1],
+                            chain
+                        )
+                        if solution != None:
+                            (v_reg_trace_output, new_chain) = solution
+                            if v_reg_trace_output == True:
+                                logging.debug("local solution found:")
+                                self.output_chains.append(new_chain)
+                                self.stop_condition = STOP_CONDITION_FALSE
+                                continue
+
+                        logging.debug(f"RECURSING: {starting_point_string}")
+                        logging.debug(f"chain: {chain}")  
                         self.fn_trace_reverse(
                             starting_point_string,
                             chain + ',' + starting_point_string,
-                            tuple[1] - num_locals
+                            position=(tuple[1] - num_locals)
                         )
     
     def fn_trace_v_reverse(self, method, index, register, chain):
@@ -686,7 +737,9 @@ class CodeTraceAdvanced:
         :param index: instruction index (integer) to start trace from
         :param register: integer value of register
         :param chain: string containing comma-separated "chain links"
+        :returns: (bool, list(string)) = whether chain has been found and new chain discovered 
         """
+        logging.debug("fn_trace_v_reverse")
         instructions = list(method.get_instructions())
         num_instructions = len(instructions)
         num_locals = self.fn_get_locals(method)
@@ -696,15 +749,25 @@ class CodeTraceAdvanced:
             )
         method_string = c + '->' + m + d
         new_chain = chain + ',' + method_string
+
         for i in range(index, 0, -1):
+            logging.debug(f"instruction {i}")
+
             instruction = instructions[i]
+            logging.debug(f"{i}: {instruction.get_op_value()} {instruction.get_name()} {instruction.get_output()}")
+            
             opcode = instruction.get_op_value()
+
             operands = instruction.get_operands()
             for op_index, operand in enumerate(operands):
                 # 0x00 is "register".
                 if operand[0] != 0:
+                    logging.debug("ig 1")
                     continue
                 if (register != operand[1]):
+                    logging.debug("ig 2: register != operand[1]")
+                    logging.debug(f"register: {register}")
+                    logging.debug(f"operand: {operand}")
                     continue
                 # move
                 if ((opcode in 
@@ -713,21 +776,23 @@ class CodeTraceAdvanced:
                         (op_index == 0)):
                     move_source = operands[1][1]
                     if move_source < num_locals:
-                        self.fn_trace_v_reverse(
+                        return self.fn_trace_v_reverse(
                             method,
                             i-1,
                             move_source,
                             chain
                         )
                     else:                        
-                        self.fn_trace_reverse(
+                        return self.fn_trace_reverse(
                             method_string,
                             new_chain,
                             move_source - num_locals
                         )
-                    return
                 # move-result.
                 elif (opcode in [0x0A, 0x0B, 0x0C]):
+                    logging.debug("Move result")
+                    # maybe we need to trace common "pass-throughs", ie
+                    #invoke-virtual {v6, v0}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
                     previous_instruction = instructions[i-1]
                     # If move-result did not follow an invoke opcode,
                     #  then continue.
@@ -735,35 +800,55 @@ class CodeTraceAdvanced:
                             [0x6E, 0x6F, 0x70, 0x71, 0x72,
                              0x74, 0x75, 0x76, 0x77, 0x78]):
                         continue
+                    logging.debug("valid instr found")
                     # See if previous instruction satisfies trace to condition.
                     if self.trace_to_type == 'RESULTOF':
                         self.fn_check_traceto_result(previous_instruction)
                         if self.stop_condition == STOP_CONDITION_TRUE:
-                            return True
+                            last_meth = f'{c}.{m}.{index}:{previous_instruction.get_operands()[-1][-1]}'
+                            temp = new_chain.split(",")
+                            temp.insert(-1, last_meth)
+                            new_chain = ','.join(temp)
+                            logging.debug("RETURN TRUE")
+                            return (True, new_chain)
+
+                    logging.debug("prev instr did not satisfy call, continuing")
                     # Trace each register as well.
                     previous_operands = previous_instruction.get_operands()
                     for previous_operand in previous_operands:
+                        logging.debug(f"previous_operand {previous_operand}")
                         if previous_operand[0] != 0:
                             continue
+
                         if previous_operand[1] < num_locals:
-                            self.fn_trace_v_reverse(
+                            return self.fn_trace_v_reverse(
                                 method,
                                 i-2,
                                 previous_operand[1],
                                 chain
                             )
                         else:
-                            self.fn_trace_reverse(
+                            return self.fn_trace_reverse(
                                 method_string,
                                 new_chain,
                                 previous_operand[1] - num_locals
                             )
-                    return
                 # Constant declaration. This indicates a value change.
                 # We aren't interested.
                 elif (opcode in 
                         [0x12, 0x13, 0x14, 0x15, 0x16,
-                         0x17, 0x18, 0x19, 0x1A, 0x1B, 0x1C]):
+                         0x17, 0x18, 0x19, 0x1A, 0x1B, 0x1C] and self.trace_to_type == 'CONST'):
+                    if op_index == 1 and register == operand[1]:
+                        last_meth = f'{c}.{m}.{index}:CONST {operand[1]} = {instruction.get_operands()[-1][-1]}'
+                        temp = new_chain.split(",")
+                        temp.insert(-1, last_meth)
+                        new_chain = ','.join(temp)
+                        logging.debug("RETURN TRUE")
+                        return (True, new_chain)
+
+
+
+
                     return
                 # aget. We trace the source, and stop tracing the
                 #  current register (because it would have had a different
@@ -773,38 +858,38 @@ class CodeTraceAdvanced:
                         (op_index==0)):
                     aget_source = operands[1][1]
                     if aget_source < num_locals:
-                        self.fn_trace_v_reverse(
+                        return self.fn_trace_v_reverse(
                             method,
                             i-1,
                             aget_source,
                             chain
                         )
                     else:                        
-                        self.fn_trace_reverse(
+                        return self.fn_trace_reverse(
                             method_string,
                             new_chain,
                             aget_source - num_locals
                         )
-                    return
                 # aput. 
                 elif((opcode in 
                         [0x4B, 0x4C, 0x4D, 0x4E, 0x4F, 0x50, 0x51]) and 
                         (op_index == 1)):
                     aput_source = operands[0][1]
                     if aput_source < num_locals:
-                        self.fn_trace_v_reverse(
+                        return self.fn_trace_v_reverse(
                             method,
                             i-1,
                             aput_source,
                             chain
                         )
                     else:
-                        self.fn_trace_reverse(
+
+                        return self.fn_trace_reverse(
                             method_string,
                             new_chain,
                             aput_source - num_locals
                         )
-                    return
+
                 # iget. We trace the source field, and stop tracing the
                 #  current register (because it would have had a different
                 #  value prior to aget).
@@ -812,47 +897,80 @@ class CodeTraceAdvanced:
                         [0x52, 0x53, 0x54, 0x55, 0x56, 0x57, 0x58]) and 
                         (op_index==0)):
                     iget_source = operands[2][2]
-                    self.fn_trace_field_reverse(iget_source, new_chain)
-                    return
+                    return self.fn_trace_field_reverse(iget_source, new_chain)
+                    
                 # sget.
                 elif ((opcode in 
                         [0x60, 0x61, 0x62, 0x63, 0x64, 0x65, 0x66]) and 
                         (op_index==0)):
                     sget_source = operands[1][2]
-                    self.fn_trace_field_reverse(sget_source, new_chain)
-                    return
+                    return self.fn_trace_field_reverse(sget_source, new_chain)
+                    
+
+                elif (opcode in [0x1f]):
+                    logging.debug("check-cast found")
+                    if self.trace_to_type == 'CASTTO':
+                        for item in self.trace_to_list:
+                            item = self.fn_clean_traceto_item(item)
+                            logging.debug("OPERANDS TO CAST:")
+                            logging.debug(instruction.get_operands())
+                            if item in instruction.get_operands()[-1][-1]:
+                                logging.debug("Matching cast found, returning")
+                                temp = new_chain.split(",")
+                                temp.insert(-1, f'{c}.{m}.{index}:CASTTO:{instruction.get_operands()[-1][-1]}')
+                                new_chain = ','.join(temp)
+                                #DEBUG    65: 31 check-cast v1, Landroidx/navigation/ActivityNavigator$Extras;
+                                return True, new_chain
                 # invoke-<> method calls.
                 # This should actually never come up, because ARGTO wouldn't be
                 #  TRACETO in reverse tracing.
                 elif (opcode in 
                         [0x6E, 0x6F, 0x70, 0x71, 0x72,
                          0x74, 0x75, 0x76, 0x77, 0x78]):
+                    logging.debug("invoke-virtual found")
                     if self.trace_to_type == 'ARGTO':
                         self.fn_check_traceto_arg(instruction, op_index)
                         if self.stop_condition == STOP_CONDITION_TRUE:
-                            return True
+                            logging.debug(f"fn_check_traceto_arg returned TRUE: ")
+                            temp = new_chain.split(",")
+                            temp.insert(-1, f'{c}.{m}.{index}:{instruction.get_operands()[-1][-1]}')
+                            new_chain = ','.join(temp)
+                            return True, new_chain
+
+                    # TODO: finish this
                     # If this is a class instantiation, then trace other args.
-                    if op_index == 0:                        
-                        if len(operands)<= 2:
-                            continue
-                        for x in range(1, len(operands)-1):
-                            if operands[x][0] != 0:
-                                continue
-                            arg_operand = operands[x][1]
-                            if arg_operand < num_locals:
-                                self.fn_trace_v_reverse(
-                                    method,
-                                    i-1,
-                                    arg_operand,
-                                    chain
-                                )
-                            else:
+                    # COmmenting out thsi for now until we find better way of looking at only instanciations
+                    # if op_index == 0:
+                    #     # we are examining operand 0 to invoke-v, the object itself
+
+                    #     # IF WE ARE LOOKING AT A CALL OF THE OBJECT WE ARE INTERESTED IN
+                    #     # ie we are looking for where p1 comes from and this is an invoke-virtual to p1.method()
+                    #     # ahhhhhhhhhhhhhh might be a mistake???
+
+                    #     # WHY THIS???                      
+                    #     if len(operands)<= 2:
+                    #         continue
+                        
+                    #     # look at operands !=0 one by one
+                    #     for x in range(1, len(operands)-1):
+                    #         if operands[x][0] != 0:
+                    #             continue
+                    #         # which reg is at position x
+                    #         arg_operand = operands[x][1]
+                    #         if arg_operand < num_locals:
+                    #             self.fn_trace_v_reverse(
+                    #                 method,
+                    #                 i-1,
+                    #                 arg_operand,
+                    #                 chain
+                    #             )
+                    #         else:
                                 
-                                self.fn_trace_reverse(
-                                    method_string,
-                                    new_chain,
-                                    arg_operand - num_locals
-                                )
+                    #             self.fn_trace_reverse(
+                    #                 method_string,
+                    #                 new_chain,
+                    #                 arg_operand - num_locals
+                    #             )
                     # Don't return here!
                 
     def fn_trace_field_reverse(self, field, chain):
@@ -901,6 +1019,17 @@ class CodeTraceAdvanced:
                             new_chain,
                             field_source - num_locals
                         )
+
+    def fn_clean_traceto_item(self, item):
+        """removes any decorators from item and returns method name
+        
+        :param item: item to clean
+        :returns: cleaned item
+        """
+        for bad in ["ARGTO", "RESULTOF", "ARGINDEX"]:
+            item = item.replace(bad, "")
+
+        return item.strip().split(" ")[0]
        
     def fn_check_traceto_arg(self, instruction, op_index):
         """Checks if instruction+operand satisfy an ARGTO condition in TRACETO.
@@ -910,14 +1039,25 @@ class CodeTraceAdvanced:
         :param instruction: androguard.core.bytecodes.dvm.Instruction
         :param op_index: integer operand index
         """
+        logging.debug(instruction)
+        logging.debug(f"opindex: {op_index}")
         if op_index != self.trace_to_argindex:
+            logging.debug(f"op_index != {self.trace_to_argindex}")
             return
+
+        logging.debug(f"found correct opindex for potential argto")
         operands = instruction.get_operands()
-        last_operand = operands[-1][2]
+        last_operand = operands[-1][-1]
         for item in self.trace_to_list:
+            item = self.fn_clean_traceto_item(item)
+            logging.debug(f"item: {item}")
+            logging.debug(f"last_operand: {last_operand}")
             if item in last_operand:
+                logging.debug("method matches, returning true")
                 self.stop_condition = STOP_CONDITION_TRUE
                 return
+
+
 
     def fn_check_traceto_result(self, invoked_method_instruction):
         """Checks if an instruction satisfies a RESULTOF condition in TRACETO.
@@ -927,9 +1067,17 @@ class CodeTraceAdvanced:
         :param invoked_method_instruction: Androguard EncodedMethod
         """
         operands = invoked_method_instruction.get_operands()
-        last_operand = operands[-1][2]
+        logging.debug("RESULT OPERANDS:")
+        logging.debug(invoked_method_instruction)
+        logging.debug(operands)
+        last_operand = operands[-1][-1]
+        logging.debug(self.trace_to_list)
         for item in self.trace_to_list:
+            item = self.fn_clean_traceto_item(item)
+            logging.debug(f"item: {item}")
+            logging.debug(f"last_operand: {last_operand}")
             if item in last_operand:
+                logging.debug("method matches, returning true")
                 self.stop_condition = STOP_CONDITION_TRUE
                 return
     
@@ -988,23 +1136,35 @@ class CodeTraceAdvanced:
             to method of interest
         :param called_method: string representing method of interest (smali)
         :param reg_position: integer operand index
+        
         :returns: list of (instruction index, register) tuples
         """
         index_reg = []
         instructions = list(calling_method.get_instructions())
+        logging.debug(instructions)
         for index, instruction in enumerate(instructions):
+            logging.debug(f"{index}: {instruction.get_op_value()} {instruction.get_name()} {instruction.get_output()}")
+            
             opcode = instruction.get_op_value()
             if (opcode not in 
                     [0x6E, 0x6F, 0x70, 0x71, 0x72,
                      0x74, 0x75, 0x76, 0x77, 0x78]):
+                logging.debug("ignoring")
                 continue
             all_operands = instruction.get_operands()
-            method_operand = all_operands[-1][2]
+            logging.debug(f"operands: {all_operands}")
+            method_operand = all_operands[-1][-1]
             if called_method in method_operand:
+                print(called_method)
+                print(method_operand)
+                print(f"reg_position looked for: {reg_position}")
+            
                 if reg_position >= (len(all_operands)-1):
                     reg_position = len(all_operands)-2
+
                 operand_of_interest = all_operands[int(reg_position)][1]
                 index_reg.append((index, operand_of_interest))
+
         return index_reg
         
     def fn_identify_result_reg(self, calling_method, called_method):
@@ -1046,10 +1206,14 @@ class CodeTraceAdvanced:
             (either "<class>" or "<method>")
         :returns: list containing class, method, descriptor parts
         """
+        logging.debug(f'fn_determine_class_method_desc: {trace_from}')
         [class_part, method_part, desc_part] = \
             self.inst_analysis_utils.fn_get_class_method_desc_from_string(
                 trace_from
             )
+        logging.debug(f'class: {class_part}')
+        logging.debug(f'method: {method_part}')
+        logging.debug(f'desc: {desc_part}')
         # If we care only about the class part, overwrite the method/desc
         #  parts with '.' (i.e., "don't care")
         if trace_from_type == '<class>':
@@ -1161,6 +1325,8 @@ class CodeTraceAdvanced:
             if 'ARGINDEX' in trace_from_string:
                 from_arg_index = \
                     int((trace_from_string.split('ARGINDEX')[1]).strip())
+                logging.debug(trace_from_string.split('ARGINDEX')[1])
+                logging.debug(f"========================= {from_arg_index}")
         else:
             trace_from = trace_from_string
                 
