@@ -1,0 +1,14 @@
+{
+    "METADATA": {
+        "NAME": "getExternalFilesDir"
+    },
+    "CODEPARAMS": {
+        "SEARCH": {
+            "SEARCHFORCALLTOMETHOD": {
+                "METHOD": "->getExternalFilesDir",
+                "RETURN": "<method> AS @getExternalFilesDir"
+            }
+        }
+    },
+    "GRAPH": "@getExternalFilesDir WITH <method>:<desc>:<class> AS attribute=nodename"
+}

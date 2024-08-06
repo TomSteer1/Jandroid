@@ -434,11 +434,11 @@ class CodeTrace:
         class_part = re.escape(class_part)
         method_part = re.escape(method_part)
 
-        mathcing_methods = self.androguard_dx.find_methods(
+        matching_methods = self.androguard_dx.find_methods(
             class_part,
             method_part,
             desc_part)
-        for method in mathcing_methods:
+        for method in matching_methods:
             starting_points.append(method.get_method())
 
         # Reset.

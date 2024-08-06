@@ -32,7 +32,7 @@ class Neo4jGraphHandler:
         config.read(path_config_file)
         self.neo4j_url = 'http://localhost:7474'
         self.neo4j_username = 'neo4j'
-        self.neo4j_password = 'n3o4j'
+        self.neo4j_password = 'n3o4jn3o4j'
         if config.has_section('NEO4J'):
             if config.has_option('NEO4J', 'URL'):
                 self.neo4j_url = config['NEO4J']['URL']
@@ -366,7 +366,7 @@ class Neo4jGraphHandler:
         try:
             
             with self.db.session() as session:
-                res = session.read_transaction(self.query_callback, cypher_query)
+                res = session.write_transaction(self.query_callback, cypher_query)
         except Exception as e:
             print(cypher_query)
             raise JandroidException(

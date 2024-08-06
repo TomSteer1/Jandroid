@@ -142,7 +142,7 @@ class Jandroid:
                    + 'Use "-g neo4j" to output to a Neo4j database. '
                    + 'Requires that a Neo4j database be up and '
                    + 'running on http://localhost:7474 '
-                   + 'with username:neo4j and password:n3o4j '
+                   + 'with username:neo4j and password:n3o4jn3o4j '
                    + '(or user-specified values from config). '
                    + 'Or use "-g visjs" to create a vis.js network in html '
                    + 'that can be viewed from the output folder. '

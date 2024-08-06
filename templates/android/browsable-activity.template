@@ -1,6 +1,6 @@
 {
     "METADATA": {
-        "NAME": "browsableactivity"
+        "NAME": "browsableActivity"
     },    
     "MANIFESTPARAMS": {
         "BASEPATH": "manifest->application->activity OR manifest->application->activity-alias",
