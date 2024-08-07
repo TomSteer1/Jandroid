@@ -228,7 +228,7 @@ class AnalysisUtils:
         :returns: list of unique methods that get called by the method 
             of interest
         """
-        desc_part = desc_part.replace('[','\[')
+        desc_part = desc_part.replace('[',r'\[')
         # First get all methods that match the given signature.
         method_objs = self.fn_get_methods(
             class_part,
