@@ -340,7 +340,7 @@ class CodeSearch:
             classes_inc_sub.extend(
                 self.inst_analysis_utils.fn_find_subclasses(class_part)
             )
-            
+            all_methods = []
             # Search for all class/method combinations.
             for one_class in classes_inc_sub:
                 logging.debug(

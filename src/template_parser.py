@@ -631,7 +631,21 @@ class AndroidTemplateParser:
         search_keywords_expected_structure = {
             'SEARCHFORMETHOD': {
                 'Required': False,
-                'Type': str
+                'Type': dict,
+                'Subkeys': {
+                    'METHOD': {
+                        'Required': True,
+                        'Type': str
+                    },
+                    'SEARCHLOCATION': {
+                        'Required': False,
+                        'Type': str
+                    },
+                    'RETURN': {
+                        'Required': False,
+                        'Type': str
+                    }
+                }
             },
             'SEARCHFORCALLTOMETHOD': {
                 'Required': False,
