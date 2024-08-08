@@ -158,7 +158,8 @@ class AnalyseApps():
                     process_send_queue,
                     process_receive_queue,
                     num_processes
-                )
+                ),
+                daemon=True
             )
             
             # Start the worker process and append to process list.
@@ -323,6 +324,7 @@ class AnalyseApps():
     def fn_exit_gracefully(self, signum, frame):
         for process in self.process_list:
             process.kill()
+        sys.exit(1)
             
     def fn_create_custom_graph(self):
         self.inst_custom_grapher.fn_create_custom_graph(
