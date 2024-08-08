@@ -14,7 +14,7 @@
     "CODEPARAMS": {
         "TRACE": {
             "TRACETYPE": "ADVANCED",
-            "TRACEFROM": "ARGTO <method>:Landroid/webkit/WebView;->loadUrl(Ljava/lang/String;)V ARGINDEX 1",
+            "TRACEFROM": "ARGTO <method>:Landroid/webkit/WebView;->loadUrl ARGINDEX 1",
             "TRACELENGTHMAX":10,
             "TRACETO": "RESULTOF Landroid/content/Intent;->getStringExtra(Ljava/lang/String;)Ljava/lang/String;",
             "RETURN": "<tracepath> AS @tracepath_stringextra_to_loaduri"
