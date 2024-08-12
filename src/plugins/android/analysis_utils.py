@@ -7,6 +7,7 @@ import configparser
 from androguard.misc import *
 from androguard.core import *
 from common import Conversions, JandroidException
+import androguard.core.analysis.analysis as androguardAnalysis
 
 
 class AnalysisUtils:
@@ -476,6 +477,9 @@ class AnalysisUtils:
             descriptor parts obtained from the EncodedMethod
         """
         # Use Androguard methods to get class/method/descriptor parts.
+        if type(encoded_method) is androguardAnalysis.MethodClassAnalysis:
+            logging.debug("Parsing method class analysis.")
+            encoded_method = encoded_method.get_method()
         class_part = encoded_method.get_class_name()            
         method_part = encoded_method.get_name()
         desc_part = encoded_method.get_descriptor()

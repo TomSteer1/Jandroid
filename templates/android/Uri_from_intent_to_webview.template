@@ -9,7 +9,7 @@
     "CODEPARAMS": {
         "TRACE": {
             "TRACETYPE": "ADVANCED",
-            "TRACEFROM": "ARGTO <method>:Landroid/webkit/WebView;->loadUrl(Ljava/lang/String;)V ARGINDEX 1",
+            "TRACEFROM": "ARGTO <method>:Landroid/webkit/WebView;->loadUrl ARGINDEX 1",
             "TRACELENGTHMAX":10,
             "TRACETO": "RESULTOF Landroid/content/Intent;->getData()Landroid/net/Uri;",
             "RETURN": "<tracepath> AS @tracepath_browsablejsbridge"

@@ -110,7 +110,12 @@ class CodeTraceAdvanced:
                     trace_to_item
                 )
                 if bool_single_trace_satisfied == True:
-                    bool_satisfied = True
+                    bool_checked_TRACELOCATION = self.fn_check_trace_location(
+                        code_trace_template
+                    )
+                    logging.debug(f"bool_checked_TRACELOCATION: {bool_checked_TRACELOCATION}")
+                    if bool_checked_TRACELOCATION == True:
+                        bool_satisfied = True
         # logging.debug("LOCATED SINKS")
         if bool_satisfied == True:
             if 'RETURN' in code_trace_template:
@@ -130,6 +135,47 @@ class CodeTraceAdvanced:
         logging.debug(self.output_chains)
         return [bool_satisfied, self.output_chains]
     
+    def fn_check_trace_location(self, code_trace_template):
+        """Removes chain if start_class does not match TRACELOCATION
+
+        :param code_trace_template: code template containing TRACELOCATION
+        """
+        if 'TRACELOCATION' in code_trace_template:
+            trace_location = code_trace_template['TRACELOCATION']
+            class_type = '<class>'
+            class_value = trace_location
+            if ":" in trace_location:
+                trace_location_split = trace_location.split(":")
+                class_type = trace_location_split[0]
+                class_value = trace_location_split[1]
+
+            else:
+                class_value = trace_location
+
+            if class_value[0] == '@':
+                class_values = self.inst_analysis_utils.fn_get_linked_items(
+                    self.current_links,
+                    class_value
+                )
+                if class_values == None:
+                    logging.error(f"Could not find linked item {class_value}")
+                    return False
+                class_value = class_values[0]
+
+            for chain in self.output_chains:
+                classes = chain.split(',')
+                satisfied = False
+                for step in classes:
+                    if class_value in step:
+                        satisfied = True
+                        break
+                if not satisfied:
+                    self.output_chains.remove(chain)
+
+            logging.debug(f"output_chains: {self.output_chains}")
+        return len(self.output_chains) != 0
+
+
     def fn_trace_through_code(self, trace_from, trace_to):
         """Calls methods to parse arguments and starts trace handler.
         
@@ -543,7 +589,7 @@ class CodeTraceAdvanced:
         """
         field_components = field.split(' ')
         field = field_components[0] + ':' + field_components[1]
-        field = field.replace('[','\[')
+        field = field.replace('[',r'\[')
         all_fields = self.androguard_dx.find_fields(field)
         all_field_xref_to = []
         for field in all_fields:
@@ -981,7 +1027,7 @@ class CodeTraceAdvanced:
         """
         field_components = field.split(' ')
         field = field_components[0] + ':' + field_components[1]
-        field = field.replace('[','\[')
+        field = field.replace('[',r'\[')
         all_fields = self.androguard_dx.find_fields(field)
         all_field_xref_from = []
         for field in all_fields:

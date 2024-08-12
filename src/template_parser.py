@@ -726,8 +726,7 @@ class AndroidTemplateParser:
                 individual_search_obj = \
                     individual_code_search_obj[primary_search_type]
                 if ('SEARCHLOCATION' in individual_search_obj):
-                    if ((primary_search_type == 'SEARCHFORMETHOD') or 
-                            (primary_search_type == 'SEARCHFORCLASS') or 
+                    if ((primary_search_type == 'SEARCHFORCLASS') or 
                             (primary_search_type == 'SEARCHFORSTRING')):
                         raise JandroidException(
                             {
@@ -754,8 +753,7 @@ class AndroidTemplateParser:
                             )
 
                 if 'RETURN' in individual_search_obj:
-                    if ((primary_search_type == 'SEARCHFORMETHOD') or 
-                            (primary_search_type == 'SEARCHFORCLASS') or 
+                    if ((primary_search_type == 'SEARCHFORCLASS') or 
                             (primary_search_type == 'SEARCHFORSTRING')):
                         raise JandroidException(
                             {
@@ -863,6 +861,10 @@ class AndroidTemplateParser:
                 'Required': False,
                 'Type': int
             },
+            'TRACELOCATION' : {
+                'Required': False,
+                'Type': str
+            },
             'RETURN': {
                 'Required': False,
                 'Type': str
@@ -918,6 +920,17 @@ class AndroidTemplateParser:
                                     + ': BadReturnType',
                             'reason': 'Trace RETURN identifier must begin '
                                       + 'with "@tracepath_".'
+                        }
+                    )
+                
+            if 'TRACELOCATION' in individual_code_trace_obj:
+                trace_location = individual_code_trace_obj['TRACELOCATION']
+                if type(trace_location) is not str:
+                    raise JandroidException(
+                        {
+                            'type': str(os.path.basename(__file__))
+                                    + ': BadElementType',
+                            'reason': 'TRACELOCATION must be string.'
                         }
                     )
             

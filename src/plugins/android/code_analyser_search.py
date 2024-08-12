@@ -328,6 +328,8 @@ class CodeSearch:
         :param methods_to_search: list of methods to search for
         :returns: boolean indicating whether the method was found within APK
         """        
+        bool_search_satisfied = False
+        all_methods = []
         for method_to_search in methods_to_search:
             # Get the class, method and descriptor parts.
             # Note that the method MUST be specified in smali format.
@@ -340,7 +342,6 @@ class CodeSearch:
             classes_inc_sub.extend(
                 self.inst_analysis_utils.fn_find_subclasses(class_part)
             )
-            all_methods = []
             # Search for all class/method combinations.
             for one_class in classes_inc_sub:
                 logging.debug(
@@ -358,11 +359,21 @@ class CodeSearch:
                     )
                 )
         
-        # If at least one method is present.
-        if len(all_methods) == 0:
-            return False
-        else:
-            return True
+            # If no results were returned, then we needn't waste any more time.
+            if len(all_methods) == 0:
+                continue 
+            
+            logging.error("Tom's debug : all_methods = " + str(all_methods[0]))
+            bool_one_search_satisfied = \
+                self.fn_process_search_location_and_returns(
+                    method_search_object,
+                    all_methods
+                )       
+            if bool_one_search_satisfied == True:
+                bool_search_satisfied = True
+
+
+        return bool_search_satisfied
 
     def fn_search_for_presence_of_class(self, class_search_object,
                                         classes_to_search):
@@ -371,7 +382,8 @@ class CodeSearch:
         :param class_search_object: object containing search parameters
         :param search_strings: list of classes to search for
         :returns: boolean indicating whether the class was found within APK
-        """        
+        """   
+        all_classes = []     
         for class_to_search in classes_to_search:
             # We consider subclasses as well.
             classes_inc_sub = [class_to_search]
