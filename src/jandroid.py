@@ -43,6 +43,7 @@ class Jandroid:
         self.bool_generate_graph = False
         self.graph_type = 'neo4j'
         self.analysis_platform = 'android'
+        self.log_level = 'info'
         
         # Set values from function arguments.
         if path_app_folder != None:
@@ -147,6 +148,21 @@ class Jandroid:
                    + 'Or use "-g visjs" to create a vis.js network in html '
                    + 'that can be viewed from the output folder. '
                    + 'Or use "-g both" to generate both.'
+        )
+        self.argparser.add_argument(
+            '-v',
+            '--verbosity',
+            '--log-level',
+            choices = ['debug', 'info', 'warning', 'error', 'critical'],
+            action = 'store',
+            nargs='?',
+            const=self.log_level,
+            help = 'set logging level. '
+                   + 'Use "-v debug" to show all debug messages. '
+                   + 'Use "-v info" to show only info messages. '
+                   + 'Use "-v warning" to show warnings and errors. '
+                   + 'Use "-v error" to show only errors. '
+                   + 'Use "-v critical" to show only critical errors.'
         )
 
     def fn_main(self, gui=False):
@@ -294,21 +310,26 @@ class Jandroid:
         )
         log_level = current_log_level
 
-        # Get desired log level from config file.
-        config = configparser.ConfigParser()
-        try:
-            config.read(self.path_config_file)
-        except Exception as e:
-            logging.critical(
-                'Error reading config file: '
-                + str(e)
-            )
-            sys.exit(1)
-        if config.has_section('LOGGING'):
-            if config.has_option('LOGGING', 'LOG_LEVEL'):
-                log_level = (
-                    config['LOGGING']['LOG_LEVEL']
+        # Check if user has set a log level via flag
+        #  (this will override the config file).
+        if self.argparser.parse_args().verbosity:
+            log_level = self.argparser.parse_args().verbosity
+        else:
+            # Get desired log level from config file.
+            config = configparser.ConfigParser()
+            try:
+                config.read(self.path_config_file)
+            except Exception as e:
+                logging.critical(
+                    'Error reading config file: '
+                    + str(e)
                 )
+                sys.exit(1)
+            if config.has_section('LOGGING'):
+                if config.has_option('LOGGING', 'LOG_LEVEL'):
+                    log_level = (
+                        config['LOGGING']['LOG_LEVEL']
+                    )
 
         # Check whether desired log level is an accepted value.
         # If yes, set the log level.
