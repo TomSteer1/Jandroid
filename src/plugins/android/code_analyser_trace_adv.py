@@ -113,7 +113,6 @@ class CodeTraceAdvanced:
                     bool_checked_TRACELOCATION = self.fn_check_trace_location(
                         code_trace_template
                     )
-                    logging.debug(f"bool_checked_TRACELOCATION: {bool_checked_TRACELOCATION}")
                     if bool_checked_TRACELOCATION == True:
                         bool_satisfied = True
         # logging.debug("LOCATED SINKS")
@@ -173,6 +172,8 @@ class CodeTraceAdvanced:
                     self.output_chains.remove(chain)
 
             logging.debug(f"output_chains: {self.output_chains}")
+        else:
+            return True
         return len(self.output_chains) != 0
 
 
