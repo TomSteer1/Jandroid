@@ -363,7 +363,6 @@ class CodeSearch:
             if len(all_methods) == 0:
                 continue 
             
-            logging.error("Tom's debug : all_methods = " + str(all_methods[0]))
             bool_one_search_satisfied = \
                 self.fn_process_search_location_and_returns(
                     method_search_object,
