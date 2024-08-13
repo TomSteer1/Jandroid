@@ -1,0 +1,20 @@
+{
+    "METADATA": {
+        "NAME": "UniversalFileAccess"
+    },
+    "MANIFESTPARAMS": {
+        "BASEPATH": "manifest->application->activity OR manifest->application->activity-alias",
+        "RETURN": ["<smali>:<NAMESPACE>:name AS @exported_activity_name"]
+    },
+    "CODEPARAMS": {
+        "SEARCH": {
+            "SEARCHFORCALLTOMETHOD": {
+                "METHOD": "->setAllowUniversalAccessFromFileURLs",
+                "RETURN": "<method> AS @web_view_settings",
+                "SEARCHPATH": "<class>:@exported_activity_name"
+            }
+        }
+    },
+    "GRAPH": "@web_view_settings WITH <method>:<desc>:<class> AS attribute=nodename"
+}
+
