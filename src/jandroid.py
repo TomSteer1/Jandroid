@@ -52,6 +52,8 @@ class Jandroid:
             self.bool_generate_graph = bool_generate_graph
         if pull_source != None:
             self.pull_source = pull_source
+        if analysis_platform != None:
+            self.analysis_platform = analysis_platform
 
         # Also check passed args.
         self.argparser = None
