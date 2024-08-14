@@ -30,7 +30,7 @@ class Jandroid:
         # Set initial logging config.
         logging.basicConfig(
             stream=sys.stdout,
-            format='%(levelname)-8s %(message)s',
+            format='%(levelname)-8s %(message)s [%(filename)s:%(lineno)s]',
             level=logging.INFO
         )
 
@@ -165,6 +165,14 @@ class Jandroid:
                    + 'Use "-v warning" to show warnings and errors. '
                    + 'Use "-v error" to show only errors. '
                    + 'Use "-v critical" to show only critical errors.'
+        )
+        self.argparser.add_argument(
+            '-t',
+            '--template',
+            type = str,
+            action = 'store',
+            help = 'specify template to use for analysis. '
+                     + 'Provide filename as argument.'
         )
 
     def fn_main(self, gui=False):
@@ -405,7 +413,7 @@ class Jandroid:
         )
         try:
             self.master_template_object = \
-                inst_template_parser.fn_create_master_template_object()
+                inst_template_parser.fn_create_master_template_object(self.argparser.parse_args().template)
         except JandroidException as e:
                 logging.critical(
                     '['

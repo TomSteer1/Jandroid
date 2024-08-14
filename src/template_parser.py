@@ -24,9 +24,10 @@ class TemplateParser:
         # Set mode.
         self.analysis_mode = arg_mode
         # Variable to hold list of template paths.
-        self.list_of_template_files = None        
+        self.list_of_template_files = None 
+        self.templateFilter = None       
 
-    def fn_create_master_template_object(self):
+    def fn_create_master_template_object(self, templateFilter):
         """Creates a "master template object" from templates.
         
         This function doesn't actually create the template object. 
@@ -37,6 +38,16 @@ class TemplateParser:
         :returns: object (typically dictionary) of all templates.
         """
         logging.info('Creating template object.')
+        if templateFilter:
+            # Check if ends in template
+            if not templateFilter.endswith('.template'):
+                templateFilter = templateFilter + '.template'
+            # Check if the template exists
+            if not os.path.exists(os.path.join(self.path_to_templates, templateFilter)):
+                logging.error('Template file does not exist: ' + templateFilter + ' proceeding without filter')
+            else:
+                logging.info('Only loading template: ' + templateFilter)
+                self.templateFilter = templateFilter
         # Create a list of templates.
         self.__fn_enumerate_templates()
         # Instantiate relevant class, based on analysis mode.
@@ -63,7 +74,7 @@ class TemplateParser:
             for name in os.listdir(self.path_to_templates)
                 if ((os.path.isfile(
                     os.path.join(self.path_to_templates, name)
-                )) and (name.endswith('.template')))
+                )) and (name.endswith('.template')) and (self.templateFilter is None or self.templateFilter == name)  )
         ]
         logging.info(
             str(len(self.list_of_template_files))
