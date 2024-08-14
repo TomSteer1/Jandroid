@@ -261,7 +261,7 @@ class AnalysisUtils:
                         continue
                 called_methods.add(xref_to_elem[1])
         return list(called_methods)
-        
+            
     def fn_get_strings(self, search_string):
         """Gets all strings within an app that satisfy the given pattern.
         
@@ -585,7 +585,9 @@ class AnalysisUtils:
                     [class_part, method_part, desc_part] = \
                         self.fn_get_class_method_desc_from_method(method_idx)
                     method_signature = class_part + '->' + method_part + desc_part
-                    output_object[method_signature] = []
+                    output_object[method_signature] = {}
+                    output_object[method_signature]['annotations'] = []
+                    output_object[method_signature]['encoded_method'] = method_idx
 
                     # Each method_annotation stores an offset to
                     #  annotation_set_item
@@ -595,7 +597,6 @@ class AnalysisUtils:
 
                     # a annotation_set_item has an array of annotation_off_item
                     for aoffitem in ann_set_item.get_annotation_off_item():
-
                         # The annotation_off_item stores the offset to an
                         #  annotation_item
                         annotation_item = \
@@ -613,9 +614,12 @@ class AnalysisUtils:
                         # Print the class type of the annotation
                         annotation_class_type = \
                             dvm.CM.get_type(encoded_annotation.get_type_idx())
-                        if (annotation_class_type not in 
-                                output_object[method_signature]):
-                            output_object[method_signature].append(
-                                annotation_class_type
-                            )
+                        # if (annotation_class_type not in 
+                        #         output_object[method_signature]):
+                        #     output_object[method_signature].append(
+                        #         annotation_class_type
+                        #     )
+                        output_object[method_signature]['annotations'].append(
+                            annotation_class_type
+                        )
         return output_object               

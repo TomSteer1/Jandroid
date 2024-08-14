@@ -720,6 +720,24 @@ class AndroidTemplateParser:
                     }
                 }
             },
+            'SEARCHFORANNOTATION': {
+                'Required': False,
+                'Type': dict,
+                'Subkeys': {
+                    'STRING': {
+                        'Required': True,
+                        'Type': str
+                    },
+                    'SEARCHLOCATION': {
+                        'Required': False,
+                        'Type': str
+                    },
+                    'RETURN': {
+                        'Required': False,
+                        'Type': str
+                    }
+                }
+            }
         }
 
         # Check that the structure of the template matches the

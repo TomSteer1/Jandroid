@@ -182,6 +182,14 @@ class CodeSearch:
                 'CLASS',
                 search_object['CLASS']
             )
+        elif search_type == 'SEARCHFORANNOTATION':
+            logging.debug('Searching for annotation.')
+            fn_to_execute = self.fn_search_for_annotation
+            items_to_search = self.fn_identify_search_items(
+                'STRING',
+                search_object['STRING']
+            )
+
         # -------------------------------------
         # Execute the function.
         return fn_to_execute(search_object, items_to_search)
@@ -522,6 +530,43 @@ class CodeSearch:
                     class_search_object,
                     calling_methods
                 )       
+            if bool_one_search_satisfied == True:
+                bool_search_satisfied = True
+        return bool_search_satisfied
+    
+    def fn_search_for_annotation(self, annotation_search_object, search_strings):
+        """Searches for the presence of an annotation.
+        
+        :param annotation_search_object: object containing search parameters
+        :param search_strings: list of annotations to search for
+        :returns: boolean indicating whether the annotation was found
+        """
+        bool_search_satisfied = False
+        for search_string in search_strings:
+            logging.debug('Searching for annotation: "' + search_string + '".')
+            
+            satisfying_methods = []
+
+            calling_methods = self.inst_analysis_utils.fn_get_all_annotations()
+            for method in calling_methods:
+                for annotation in calling_methods[method]['annotations']:
+                    if annotation == search_string:
+                        # Get the class, method and descriptor parts.
+                        logging.debug("Method :" + method)
+                        # Convert method signature to encoded method object.
+                        satisfying_methods.append(
+                            calling_methods[method]['encoded_method']
+                        )
+            # If no results were returned, then we needn't waste any more time.
+            if len(satisfying_methods) == 0:
+                continue
+
+            # Check search locations and RETURNs.
+            bool_one_search_satisfied = \
+                self.fn_process_search_location_and_returns(
+                    annotation_search_object,
+                    satisfying_methods
+                )   
             if bool_one_search_satisfied == True:
                 bool_search_satisfied = True
         return bool_search_satisfied

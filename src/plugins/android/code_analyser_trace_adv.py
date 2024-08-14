@@ -677,7 +677,7 @@ class CodeTraceAdvanced:
             #  <init> method of this class.
             if combined_method_string in self.all_annotations:
                 if ('Landroid/webkit/JavascriptInterface;' in 
-                        self.all_annotations[combined_method_string]):
+                        self.all_annotations[combined_method_string]['annotations']):
                     method_part = '<init>'
                     desc_part = '.'
             # Get starting points.
@@ -710,7 +710,7 @@ class CodeTraceAdvanced:
                 num_locals = self.fn_get_locals(starting_point)
                 if starting_point_string in self.all_annotations:
                     if ('Landroid/webkit/JavascriptInterface;' in 
-                            self.all_annotations[starting_point_string]):
+                            self.all_annotations[starting_point_string]['annotations']):
                         chain = chain + ',' + starting_point_string
                         starting_point_string = starting_point.get_class_name() \
                                                 + '-><init>'
@@ -1442,7 +1442,7 @@ class CodeTraceAdvanced:
         jsinterface_classes = set()
         for method in self.all_annotations:
             if ('Landroid/webkit/JavascriptInterface;' in 
-                    self.all_annotations[method]):
+                    self.all_annotations[method]['annotations']):
                 jsinterface_methods.add(method)
                 class_part = method.split('->')[0]
                 jsinterface_classes.add(class_part)
