@@ -368,7 +368,7 @@ class Neo4jGraphHandler:
             with self.db.session() as session:
                 res = session.write_transaction(self.query_callback, cypher_query)
         except Exception as e:
-            print(cypher_query)
+            logging.error(cypher_query)
             raise JandroidException(
                 {
                     'type': str(os.path.basename(__file__))

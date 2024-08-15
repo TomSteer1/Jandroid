@@ -1202,9 +1202,9 @@ class CodeTraceAdvanced:
             logging.debug(f"operands: {all_operands}")
             method_operand = all_operands[-1][-1]
             if called_method in method_operand:
-                print(called_method)
-                print(method_operand)
-                print(f"reg_position looked for: {reg_position}")
+                logging.debug(called_method)
+                logging.debug(method_operand)
+                logging.debug(f"reg_position looked for: {reg_position}")
             
                 if reg_position >= (len(all_operands)-1):
                     reg_position = len(all_operands)-2

@@ -57,7 +57,7 @@ class GraphHelperMain:
                 self.node_identifier
             )
         except Exception as e:
-            print("create contraints failed, continuing")
+            logging.debug("create contraints failed, continuing")
             
         
 

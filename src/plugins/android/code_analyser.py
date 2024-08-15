@@ -51,7 +51,7 @@ class CodeAnalyser:
         :returns: a list containing a boolean indicating whether the code 
             requirements were satisfied, and link objects.
         """
-        print("PERFORMING CODE ANALYSIS")
+        logging.debug("PERFORMING CODE ANALYSIS")
         self.apk_package_name = apk_pkg
         
         # We want to copy the bug template but only edit the copy.
@@ -91,7 +91,7 @@ class CodeAnalyser:
 
         # Perform the required action and identify matches.
         for element in self.bug_template['CODEPARAMS']:
-            print("LOOKING AT ELEM")
+            logging.debug("LOOKING AT ELEM")
             bool_satisfied = self.fn_determine_action(element)
             if bool_satisfied == True:
                 self.total_elements_satisfied += 1
@@ -112,7 +112,7 @@ class CodeAnalyser:
             should be performed.
         :returns: boolean indicating whether the search or trace was satisfied.
         """        
-        print("PERFORMING CODE ANALYSIS")
+        logging.debug("PERFORMING CODE ANALYSIS")
         bool_satisfied = False
         object_template = self.bug_template['CODEPARAMS'][object_key]
         # The action can be one of SEARCH or TRACE.
