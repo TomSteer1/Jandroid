@@ -280,6 +280,8 @@ class AndroidTemplateParser:
                 }
             )
 
+        # Swap spaces for underscores in template name.
+        template_name = template_name.replace(' ', '_')
         # Check for duplicate template names.
         if template_name in self.output_template_object:
             raise JandroidException(

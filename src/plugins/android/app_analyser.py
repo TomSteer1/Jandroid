@@ -8,6 +8,7 @@ import fnmatch
 import logging
 import configparser
 from multiprocessing import Process, JoinableQueue, active_children
+import traceback
 from androguard.misc import *
 from androguard.core import *
 from manifest_analyser import ManifestAnalyser
@@ -639,6 +640,7 @@ class WorkerAnalyseApp:
                     + ': '
                     + str(e)
                     + '.'
+                    + traceback.format_exc()
                 )
 
 
