@@ -227,6 +227,13 @@ class ManifestAnalyser:
                     
                                                   
                 for xml_search_result in xml_search_results:
+                    logging.debug(
+                        'Recursively analysing '
+                        + str(xml_search_result)
+                        + ' against template '
+                        + str(current_template[key])
+                        + '.'
+                    )
                     self.fn_recursive_analysis(
                         current_template[key],
                         xml_search_result
