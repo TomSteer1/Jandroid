@@ -202,42 +202,49 @@ class ManifestAnalyser:
                 + str(key)
                 + '".'
             )
-            #Currently looking at key "intent-filter".
 
+            # If the key has an OR we need to split it.
+            split_keys = [key]
+            if ' OR ' in key:
+                split_keys = key.split(' OR ')
+
+            #Currently looking at key "intent-filter".
             # If the subsequent level is also a dictionary,
-            #  then we need to do all this all over again.
+            #  then we need to do all this all over again.element
+            # Uses the main key instead of the split key.
             if type(current_template[key]) is dict:
-                xml_search_results = current_xml_tree.findall(key)
-                logging.debug(
-                    str(len(xml_search_results))
-                    + ' XML results found for key "'
-                    + str(key)
-                    + '".'
-                )
-                if len(xml_search_results) == 0 and current_xml_tree.tag == key:
-                    logging.warning(
-                        'No results found for key "'
-                        + str(key)
-                        + '". Checking current XML tree.'
-                    )
-                    self.fn_recursive_analysis(
-                        current_template[key],
-                        current_xml_tree
-                    )
-                    
-                                                  
-                for xml_search_result in xml_search_results:
+                for split_key in split_keys:
+                    xml_search_results = current_xml_tree.findall(split_key)
                     logging.debug(
-                        'Recursively analysing '
-                        + str(xml_search_result)
-                        + ' against template '
-                        + str(current_template[key])
-                        + '.'
+                        str(len(xml_search_results))
+                        + ' XML results found for key "'
+                        + str(split_key)
+                        + '".'
                     )
-                    self.fn_recursive_analysis(
-                        current_template[key],
-                        xml_search_result
-                    )
+                    if len(xml_search_results) == 0 and current_xml_tree.tag == split_key:
+                        logging.warning(
+                            'No results found for key "'
+                            + str(split_key)
+                            + '". Checking current XML tree.'
+                        )
+                        self.fn_recursive_analysis(
+                            current_template[key],
+                            current_xml_tree
+                        )
+                        
+                                                    
+                    for xml_search_result in xml_search_results:
+                        logging.debug(
+                            'Recursively analysing '
+                            + str(xml_search_result)
+                            + ' against template '
+                            + str(current_template[key])
+                            + '.'
+                        )
+                        self.fn_recursive_analysis(
+                            current_template[key],
+                            xml_search_result
+                        )
         logging.debug(
             'Finished Analysing '
             + str(current_xml_tree)
