@@ -8,8 +8,8 @@
             "LOOKFOR": {
                 "TAGVALUEMATCH": "<NAMESPACE>:protectionLevel=0x00000000"
             },
-            "RETURN": "<NAMESPACE>:name AS @normalPermissionActivity"
+            "RETURN": "<NAMESPACE>:name AS @normalPermissions"
         }
     },
-    "GRAPH": "@normalPermissionActivity WITH <method>:<desc>:<class> AS attribute=nodename"
+    "GRAPH": "@normalPermissions WITH <method>:<desc>:<class> AS attribute=nodename"
 }
