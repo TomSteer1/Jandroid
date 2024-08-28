@@ -156,7 +156,7 @@ class CodeTraceAdvanced:
                     self.current_links,
                     class_value
                 )
-                if class_values == None:
+                if class_values == None or len(class_values) == 0:
                     logging.error(f"Could not find linked item {class_value}")
                     return False
                 class_value = class_values[0]
