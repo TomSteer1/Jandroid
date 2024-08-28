@@ -1,0 +1,18 @@
+{
+    "METADATA": {
+        "NAME": "jsInterfaceAdded"
+    },    
+    "MANIFESTPARAMS": {
+        "BASEPATH": "manifest->application->activity OR manifest->application->activity-alias",
+        "RETURN": ["<smali>:<NAMESPACE>:name AS @activity_name"]
+    },
+    "CODEPARAMS": {
+        "SEARCH": {
+            "SEARCHFORCALLTOMETHOD": {
+                "METHOD": "->addJavascriptInterface",
+                "RETURN": "<class> AS @addJavascriptInterface"
+            }
+        }
+    },
+    "GRAPH": "@addJavascriptInterface WITH <method>:<desc>:<class> AS attribute=nodename"
+}

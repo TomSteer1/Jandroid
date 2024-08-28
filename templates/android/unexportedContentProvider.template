@@ -1,0 +1,16 @@
+{
+    "METADATA": {
+        "NAME": "unexportedContentProvider"
+    },    
+    "MANIFESTPARAMS": {
+        "BASEPATH": "manifest->application->provider OR manifest->application->provider-alias",
+        "SEARCHPATH": {
+        	"LOOKFOR": {
+                	"TAGVALUEMATCH": "<NAMESPACE>:exported=false",
+                    "TAGVALUEMATCH": "<NAMESPACE>:grantUriPermissions=true"
+        	}
+        },
+        "RETURN": ["<smali>:<NAMESPACE>:name AS @unexported_activity_name"]
+    },
+    "GRAPH": "@unexported_activity_name WITH <method>:<desc>:<class> AS attribute=nodename"
+}

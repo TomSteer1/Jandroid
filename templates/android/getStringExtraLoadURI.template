@@ -1,0 +1,19 @@
+{
+    "METADATA": {
+        "NAME": "getStringExtraLoadURI"
+    },    
+    "MANIFESTPARAMS": {
+        "BASEPATH": "manifest->application->activity OR manifest->application->activity-alias",
+        "RETURN": ["<smali>:<NAMESPACE>:name AS @activity_name"]
+    },
+    "CODEPARAMS": {
+        "TRACE": {
+            "TRACETYPE": "ADVANCED",
+            "TRACEFROM": "ARGTO <method>:Landroid/webkit/WebView;->loadUrl ARGINDEX 1",
+            "TRACELENGTHMAX":10,
+            "TRACETO": "RESULTOF Landroid/content/Intent;->getStringExtra(Ljava/lang/String;)Ljava/lang/String;",
+            "RETURN": "<tracepath> AS @tracepath_stringextra_to_loaduri"
+        }
+    },
+    "GRAPH": "@tracepath_stringextra_to_loaduri WITH <method>:<desc>:<class> AS attribute=nodename"
+}

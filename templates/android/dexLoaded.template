@@ -1,0 +1,18 @@
+{
+    "METADATA": {
+        "NAME": "dexLoaded"
+    },
+    "MANIFESTPARAMS": {
+        "BASEPATH": "manifest->application->activity OR manifest->application->activity-alias",
+        "RETURN": ["<smali>:<NAMESPACE>:name AS @activity_name"]
+    },
+    "CODEPARAMS": {
+        "SEARCH": {
+            "SEARCHFORCALLTOMETHOD": {
+                "METHOD": "->loadClass",
+                "RETURN": "<method> AS @dexLoaded"
+            }
+        }
+    },
+    "GRAPH": "@dexLoaded WITH <method>:<desc>:<class> AS attribute=nodename"
+}

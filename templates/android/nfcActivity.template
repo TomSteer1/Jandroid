@@ -1,0 +1,19 @@
+{
+    "METADATA": {
+        "NAME": "nfcActivity"
+    },    
+    "MANIFESTPARAMS": {
+        "BASEPATH": "manifest->application->activity OR manifest->application->activity-alias",
+        "SEARCHPATH": {
+            "intent-filter": {
+                "action": {
+                    "LOOKFOR": {
+                        "TAGVALUEMATCH": "<NAMESPACE>:name=android.nfc.action.NDEF_DISCOVERED"
+                    }
+                }
+            }
+        },
+        "RETURN": ["<smali>:<NAMESPACE>:name AS @nfc_activity_name"]
+    },
+    "GRAPH": "@nfc_activity_name WITH <method>:<desc>:<class> AS attribute=nodename"
+}

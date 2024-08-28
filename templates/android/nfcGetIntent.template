@@ -1,0 +1,28 @@
+{
+    "METADATA": {
+        "NAME": "nfcGetIntent"
+    },    
+    "MANIFESTPARAMS": {
+        "BASEPATH": "manifest->application->activity OR manifest->application->activity-alias",
+        "SEARCHPATH": {
+            "intent-filter": {
+                "action": {
+                    "LOOKFOR": {
+                        "TAGVALUEMATCH": "<NAMESPACE>:name=android.nfc.action.NDEF_DISCOVERED"
+                    }
+                }
+            }
+        },
+        "RETURN": ["<smali>:<NAMESPACE>:name AS @nfc_activity_name"]
+    },
+    "CODEPARAMS": {
+        "TRACE": {
+            "TRACETYPE": "ADVANCED",
+            "TRACEFROM": "->getIntent",
+            "TRACELENGTHMAX":10,
+            "TRACETO": "<class>:@nfc_activity_name",
+            "RETURN": "<tracepath> AS @tracepath_nfc_getIntent"
+        }
+    },
+    "GRAPH": "@tracepath_nfc_getIntent WITH <method>:<desc>:<class> AS attribute=nodename"
+}

@@ -1,0 +1,14 @@
+{
+    "METADATA": {
+        "NAME": "jsAnnotation"
+    },
+    "CODEPARAMS": {
+        "SEARCH": {
+            "SEARCHFORANNOTATION": {
+                "STRING": "Landroid/webkit/JavascriptInterface;",
+                "RETURN": "<method> AS @jsAnnotation"
+            }
+        }
+    },
+    "GRAPH": "@jsAnnotation WITH <method>:<desc>:<class> AS attribute=nodename"
+}

@@ -1,0 +1,25 @@
+{
+    "METADATA": {
+        "NAME": "normalPermissionsActivity"
+    },    
+    "MANIFESTPARAMS": {
+        "BASEPATH": "manifest->",
+        "SEARCHPATH": {
+            "permission": {
+                "LOOKFOR": {
+                    "TAGVALUEMATCH": "<NAMESPACE>:protectionLevel=0x00000000"   
+                },
+                "RETURN": "<NAMESPACE>:name AS @normalPermissions"
+            },
+            "application" : {
+                "activity OR activity-alias OR service OR receiver": {
+                    "LOOKFOR": {
+                        "TAGVALUEMATCH": "<NAMESPACE>:permission=@normalPermissions"
+                    },
+                    "RETURN": "<NAMESPACE>:name AS @normalPermissionsActivity"
+                }
+            }
+        }
+    },
+    "GRAPH": "@normalPermissionsActivity WITH <method>:<desc>:<class> AS attribute=nodename"
+}

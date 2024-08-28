@@ -1,0 +1,25 @@
+{
+    "METADATA": {
+        "NAME": "jsbridge"
+    },    
+    "MANIFESTPARAMS": {
+        "BASEPATH": "manifest->application->activity OR manifest->application->activity-alias",
+        "RETURN": ["<smali>:<NAMESPACE>:name AS @activity_name"]
+    },
+    "CODEPARAMS": {
+        "SEARCH": {
+            "SEARCHFORCALLTOMETHOD": {
+                "METHOD": "Landroid/webkit/WebView;->addJavascriptInterface",
+                "RETURN": "<class> AS @web_view"
+            }
+        },
+        "TRACE": {
+            "TRACETYPE": "ADVANCED",
+            "TRACEFROM": "<method>:@web_view->loadUrl",
+            "TRACELENGTHMAX":10,
+            "TRACETO": "<class>:@activity_name",
+            "RETURN": "<tracepath> AS @tracepath_jsbridge"
+        }
+    },
+    "GRAPH": "@tracepath_jsbridge WITH <method>:<desc>:<class> AS attribute=nodename"
+}

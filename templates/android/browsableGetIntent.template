@@ -1,0 +1,28 @@
+{
+    "METADATA": {
+        "NAME": "browsableGetIntent"
+    },    
+    "MANIFESTPARAMS": {
+        "BASEPATH": "manifest->application->activity OR manifest->application->activity-alias",
+        "SEARCHPATH": {
+            "intent-filter": {
+                "category": {
+                    "LOOKFOR": {
+                        "TAGVALUEMATCH": "<NAMESPACE>:name=android.intent.category.BROWSABLE"
+                    }
+                }
+            }
+        },
+        "RETURN": ["<smali>:<NAMESPACE>:name AS @browsable_activity_name"]
+    },
+    "CODEPARAMS": {
+        "TRACE": {
+            "TRACETYPE": "ADVANCED",
+            "TRACEFROM": "->getIntent",
+            "TRACELENGTHMAX":10,
+            "TRACETO": "<class>:@browsable_activity_name",
+            "RETURN": "<tracepath> AS @tracepath_browsable_getIntent"
+        }
+    },
+    "GRAPH": "@tracepath_browsable_getIntent WITH <method>:<desc>:<class> AS attribute=nodename"
+}

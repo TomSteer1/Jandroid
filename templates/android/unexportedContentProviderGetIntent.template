@@ -1,0 +1,25 @@
+{
+    "METADATA": {
+        "NAME": "unexportedContentProviderGetIntent"
+    },    
+    "MANIFESTPARAMS": {
+        "BASEPATH": "manifest->application->provider OR manifest->application->provider-alias",
+        "SEARCHPATH": {
+        	"LOOKFOR": {
+                	"TAGVALUEMATCH": "<NAMESPACE>:exported=false",
+                    "TAGVALUEMATCH": "<NAMESPACE>:grantUriPermissions=true"
+        	}
+        },
+        "RETURN": ["<smali>:<NAMESPACE>:name AS @unexported_contentProvider_name"]
+    },
+    "CODEPARAMS": {
+        "TRACE": {
+            "TRACETYPE": "ADVANCED",
+            "TRACEFROM": "->getIntent",
+            "TRACELENGTHMAX":10,
+            "TRACETO": "<class>:@unexported_contentProvider_name",
+            "RETURN": "<tracepath> AS @tracepath_ucp_getIntent"
+        }
+    },
+    "GRAPH": "@tracepath_ucp_getIntent WITH <method>:<desc>:<class> AS attribute=nodename"
+}
