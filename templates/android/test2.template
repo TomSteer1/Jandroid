@@ -39,3 +39,4 @@
     },
     "GRAPH": "@tracepath_browsablejsbridge WITH <method>:<desc>:<class> AS attribute=nodename"
 }
+}

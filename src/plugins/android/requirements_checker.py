@@ -1,7 +1,7 @@
 import os
 import logging
 import platform
-
+from common import JandroidException
 
 class RequirementsChecker:
     def __init__(self, base_dir, app_dir):

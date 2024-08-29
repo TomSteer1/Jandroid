@@ -1,0 +1,14 @@
+{
+    "METADATA": {
+        "NAME": "getIntent"
+    },
+    "CODEPARAMS": {
+        "SEARCH": {
+            "SEARCHFORCALLTOMETHOD": {
+                "METHOD": "->getIntent",
+                "RETURN": "<method> AS @getIntent"
+            }
+        }
+    },
+    "GRAPH": "@getIntent WITH <method>:<desc>:<class> AS attribute=nodename"
+}

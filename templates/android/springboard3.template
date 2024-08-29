@@ -1,0 +1,19 @@
+{
+    "METADATA": {
+        "NAME": "getBundleExtra_to_startActivity"
+    },    
+    "MANIFESTPARAMS": {
+        "BASEPATH": "manifest->application->activity OR manifest->application->activity-alias OR manifest->application->receiver",
+        "RETURN": ["<smali>:<NAMESPACE>:name AS @activity_name"]
+    },
+    "CODEPARAMS": {
+        "TRACE": {
+            "TRACETYPE": "ADVANCED",
+            "TRACEFROM": "ARGTO ->startActivity(Landroid/content/Intent;)V ARGINDEX1",
+            "TRACELENGTHMAX":10,
+            "TRACETO": "RESULTOF Landroid/os/Bundle;->getParcelable(Ljava/lang/String;)Landroid/os/Parcelable;",
+            "RETURN": "<tracepath> AS @tracepath_getBundleExtra_to_startActivity"
+        }
+    },
+    "GRAPH": "@tracepath_getBundleExtra_to_startActivity WITH <method>:<desc>:<class> AS attribute=nodename"
+}

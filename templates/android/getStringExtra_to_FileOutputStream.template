@@ -1,0 +1,15 @@
+{
+    "METADATA": {
+        "NAME": "getStringExtra_to_FileOutputStream"
+    },    
+    "CODEPARAMS": {
+        "TRACE": {
+            "TRACETYPE": "ADVANCED",
+            "TRACEFROM": "ARGTO Ljava/io/FileOutputStream;-><init>(Ljava/lang/String;Z)V ARGINDEX1",
+            "TRACELENGTHMAX":10,
+            "TRACETO": "RESULTOF Landroid/content/Intent;->getStringExtra(Ljava/lang/String;)Ljava/lang/String;",
+            "RETURN": "<tracepath> AS @tracepath_getStringExtra_to_FileOutputStream"
+        }
+    },
+    "GRAPH": "@tracepath_getStringExtra_to_FileOutputStream WITH <method>:<desc>:<class> AS attribute=nodename"
+}

@@ -100,6 +100,7 @@ class AnalysisUtils:
         #  so we don't have to repeat the search for
         #  previously identified classes.
         self.subclasses[class_name] = subclasses
+        logging.debug(f"RETURNING {subclasses}")
         return subclasses
         
     def fn_find_superclasses(self, class_name, recursion=True):
@@ -160,16 +161,21 @@ class AnalysisUtils:
         :returns: list of Androguard MethodAnalysis objects
         """
         method_objs = []
-        if desc_part != '.':
+        if desc_part != '.*':
             desc_part = re.escape(desc_part)
         class_part = re.escape(class_part)
         method_part = re.escape(method_part)
-        
+        logging.debug("FIND METHODS:")
+        logging.debug(f"class_part: {class_part}")
+        logging.debug(f"method_part: {method_part}")
+        logging.debug(f"desc_part: {desc_part}")
+            
         for method in self.androguard_dx.find_methods(
             class_part,
             method_part,
             desc_part
         ):
+            logging.debug(f"FOUND {method}")
             method_objs.append(method)
         return method_objs
         
@@ -207,6 +213,7 @@ class AnalysisUtils:
                         continue
                 if xref_from_elem[1] not in calling_methods:
                     calling_methods.append(xref_from_elem[1])
+        logging.debug(f"RETURNING found methods: {calling_methods}")
         return calling_methods
         
     def fn_get_calls_from_method(self, class_part, method_part, desc_part, 
@@ -254,7 +261,7 @@ class AnalysisUtils:
                 called_methods.add(xref_to_elem[1])
         return list(called_methods)
         
-    def fn_get_strings(self, string):
+    def fn_get_strings(self, search_string):
         """Gets all strings within an app that satisfy the given pattern.
         
         :param string: the string to search for
@@ -449,7 +456,7 @@ class AnalysisUtils:
             #  been provided, i.e., the entire string is the method name.
             else:
                 method_part = method_desc_part
-                desc_part = '.'
+                desc_part = '.*'
         # If there is no "->" then assume that the entire string is the
         #  class name.
         else:

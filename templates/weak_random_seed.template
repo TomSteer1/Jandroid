@@ -1,0 +1,15 @@
+{
+    "METADATA": {
+        "NAME": "constant_seed"
+    },    
+    "CODEPARAMS": {
+        "TRACE": {
+            "TRACETYPE": "ADVANCED",
+            "TRACEFROM": "ARGTO ->setSeed",
+            "TRACELENGTHMAX":10,
+            "TRACETO": "CONST",
+            "RETURN": "<tracepath> AS @tracepath_setSeed_from_constant"
+        }
+    },
+    "GRAPH": "@tracepath_setSeed_from_constant WITH <method>:<desc>:<class> AS attribute=nodename"
+}
