@@ -1,6 +1,6 @@
 {
     "METADATA": {
-        "NAME": "getStringExtra_to_FileOutputStream"
+        "NAME": "getStringExtraFileOutputStream"
     },    
     "CODEPARAMS": {
         "TRACE": {

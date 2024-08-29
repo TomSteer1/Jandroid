@@ -1,6 +1,6 @@
 {
     "METADATA": {
-        "NAME": "getIntentExtra_to_castIntent"
+        "NAME": "intentURItoWebVIew"
     },    
     "MANIFESTPARAMS": {
         "BASEPATH": "manifest->application->activity OR manifest->application->activity-alias OR manifest->application->receiver",
@@ -9,11 +9,11 @@
     "CODEPARAMS": {
         "TRACE": {
             "TRACETYPE": "ADVANCED",
-            "TRACEFROM": "CASTTO Landroid/content/Intent",
+            "TRACEFROM": "ARGTO <method>:Landroid/webkit/WebView;->loadUrl ARGINDEX 1",
             "TRACELENGTHMAX":10,
-            "TRACETO": "RESULTOF Landroid/content/Intent;->getParcelableExtra",
-            "RETURN": "<tracepath> AS @tracepath_getIntentExtra_to_startActivity"
+            "TRACETO": "RESULTOF Landroid/content/Intent;->getData Landroid/net/Uri;",
+            "RETURN": "<tracepath> AS @tracepath_browsablejsbridge"
         }
     },
-    "GRAPH": "@tracepath_getIntentExtra_to_startActivity WITH <method>:<desc>:<class> AS attribute=nodename"
+    "GRAPH": "@tracepath_browsablejsbridge WITH <method>:<desc>:<class> AS attribute=nodename"
 }

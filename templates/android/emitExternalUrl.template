@@ -1,0 +1,24 @@
+{
+    "METADATA": {
+        "NAME": "emitExternalUrl"
+    },  
+    "MANIFESTPARAMS": {
+        "BASEPATH": "manifest->application->activity OR manifest->application->activity-alias",
+        "SEARCHPATH": {
+        	"LOOKFOR": {
+                	"TAGVALUEMATCH": "<NAMESPACE>:exported=true"
+        	}
+        },
+        "RETURN": ["<smali>:<NAMESPACE>:name AS @exported_activity_name"]
+    },
+    "CODEPARAMS": {
+        "SEARCH": {
+            "SEARCHFORMETHOD": {
+                "METHOD": "->emitExternalUrl",
+                "RETURN": "<method> AS @emitExternalUrl",
+                "SEARCHLOCATION": "<class>:@exported_activity_name"
+            }
+        }
+    },
+    "GRAPH": "@emitExternalUrl WITH <method>:<desc>:<class> AS attribute=nodename"
+}

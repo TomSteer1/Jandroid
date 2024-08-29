@@ -1,6 +1,6 @@
 {
     "METADATA": {
-        "NAME": "getIntentExtra_to_startActivity"
+        "NAME": "getIntentExtraStartActivity"
     },    
     "MANIFESTPARAMS": {
         "BASEPATH": "manifest->application->activity OR manifest->application->activity-alias OR manifest->application->receiver",

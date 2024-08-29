@@ -1,0 +1,33 @@
+{
+    "METADATA": {
+        "NAME": "browsableDexLoaded"
+    },
+    "MANIFESTPARAMS": {
+        "BASEPATH": "manifest->application->activity OR manifest->application->activity-alias",
+        "SEARCHPATH": {
+            "intent-filter": {
+                "action": {
+                    "LOOKFOR": {
+                        "TAGVALUEMATCH": "<NAMESPACE>:name=android.intent.action.VIEW"
+                    }
+                },
+                "category": {
+                    "LOOKFOR": {
+                        "TAGVALUEMATCH": "<NAMESPACE>:name=android.intent.category.BROWSABLE"
+                    }
+                }
+            }
+        },
+        "RETURN": ["<smali>:<NAMESPACE>:name AS @activity_name"]
+    },
+    "CODEPARAMS": {
+        "SEARCH": {
+            "SEARCHFORCALLTOMETHOD": {
+                "METHOD": "Ldalvik/system/DexClassLoader;->loadClass",
+                "RETURN": "<class> AS @DexClassLoader",
+                "SEARCHLOCATION": "@activity_name"
+            }
+        }
+    },
+    "GRAPH": "@DexClassLoader WITH <method>:<desc>:<class> AS attribute=nodename"
+}

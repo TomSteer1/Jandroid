@@ -1,25 +1,32 @@
 {
     "METADATA": {
-        "NAME": "jsbridge"
-    },    
+        "NAME": "getStringExtraLoadURLwInterface"
+    },
     "MANIFESTPARAMS": {
         "BASEPATH": "manifest->application->activity OR manifest->application->activity-alias",
-        "RETURN": ["<smali>:<NAMESPACE>:name AS @activity_name"]
+        "RETURN": ["<smali>:<NAMESPACE>:name AS @exported_activity_name"]
     },
     "CODEPARAMS": {
         "SEARCH": {
             "SEARCHFORCALLTOMETHOD": {
-                "METHOD": "Landroid/webkit/WebView;->addJavascriptInterface",
-                "RETURN": "<class> AS @web_view"
+                "METHOD": "->addJavascriptInterface",
+                "RETURN": "<method> AS @web_view_usage",
+                "SEARCHPATH": "<class>:@exported_activity_name"
+            },
+            "SEARCHFORMETHOD": {
+                "METHOD": "->addJavascriptInterface",
+                "RETURN": "<class> AS @web_view",
+                "SEARCHPATH": "<class>:@web_view_usage[]"
             }
         },
         "TRACE": {
             "TRACETYPE": "ADVANCED",
-            "TRACEFROM": "<method>:@web_view->loadUrl",
+            "TRACEFROM": "ARGTO <method>:@web_view[]->loadUrl ARGINDEX 1",
             "TRACELENGTHMAX":10,
-            "TRACETO": "<class>:@activity_name",
-            "RETURN": "<tracepath> AS @tracepath_jsbridge"
+            "TRACETO": "RESULTOF Landroid/content/Intent;->getStringExtra(Ljava/lang/String;)Ljava/lang/String;",
+            "TRACELOCATION": "<class>:@web_view_usage",
+            "RETURN": "<tracepath> AS @tracepath_getStringExtra_LoadURI_WithInterface"
         }
     },
-    "GRAPH": "@tracepath_jsbridge WITH <method>:<desc>:<class> AS attribute=nodename"
+    "GRAPH": "@tracepath_getStringExtra_LoadURI_WithInterface WITH <method>:<desc>:<class> AS attribute=nodename"
 }
